@@ -1,52 +1,8 @@
 apiVersion: 1.0.0
 metadata:
-  name: nodejs-web-app-dsse
+  name: nodejs-web-app-dsseabcd
 projects:
   - name: react-web-app
     source:
       location: 'https://github.com/che-samples/react-web-app'
       type: git
-components:
-  - id: vscode/typescript-language-features/latest
-    type: chePlugin
-  - mountSources: true
-    endpoints:
-      - name: nodejs
-        port: 3000
-    memoryLimit: 1500Mi
-    type: dockerimage
-    alias: nodejs
-    image: 'quay.io/eclipse/che-nodejs12-community@sha256:66fd9710610641572b99479cfc13282b60c55a0cbe87042cfc7ea536a3ea4122'
-  - id: redhat/vscode-xml/latest
-    type: chePlugin
-commands:
-  - name: 1. Install Yarn 2
-    actions:
-      - workdir: '${CHE_PROJECTS_ROOT}/react-web-app'
-        type: exec
-        command: yarn set version berry
-        component: nodejs
-  - name: 2. Install all required dependencies
-    actions:
-      - workdir: '${CHE_PROJECTS_ROOT}/react-web-app'
-        type: exec
-        command: yarn install
-        component: nodejs
-  - name: 3. Build the app
-    actions:
-      - workdir: '${CHE_PROJECTS_ROOT}/react-web-app'
-        type: exec
-        command: yarn build
-        component: nodejs
-  - name: 4. Run the app
-    actions:
-      - workdir: '${CHE_PROJECTS_ROOT}/react-web-app'
-        type: exec
-        command: yarn start
-        component: nodejs
-  - name: 5. Launch tests
-    actions:
-      - workdir: '${CHE_PROJECTS_ROOT}/react-web-app'
-        type: exec
-        command: yarn test
-        component: nodejs
