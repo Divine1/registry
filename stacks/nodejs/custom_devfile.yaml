@@ -1,45 +1,52 @@
-schemaVersion: 2.0.0
 apiVersion: 1.0.0
 metadata:
-  generateName: nodejs-angular-
+  name: nodejs-web-app-dsse
 projects:
-  - name: angular-realworld-example-app
+  - name: react-web-app
     source:
+      location: 'https://github.com/che-samples/react-web-app'
       type: git
-      location: 'https://github.com/che-samples/nodejs-angular'
 components:
-  - type: chePlugin
-    id: vscode/typescript-language-features/latest
-  - type: dockerimage
-    alias: nodejs
-    image: 'quay.io/eclipse/che-nodejs10-community@sha256:6ce1df02636cb02b4c07947a99cb75538b7a04a7a578d3941878d46f496c57c4'
-    memoryLimit: 2Gi
+  - id: vscode/typescript-language-features/latest
+    type: chePlugin
+  - mountSources: true
     endpoints:
-      - name: angular
-        port: 4200
-    mountSources: true
+      - name: nodejs
+        port: 3000
+    memoryLimit: 1500Mi
+    type: dockerimage
+    alias: nodejs
+    image: 'quay.io/eclipse/che-nodejs12-community@sha256:66fd9710610641572b99479cfc13282b60c55a0cbe87042cfc7ea536a3ea4122'
+  - id: redhat/vscode-xml/latest
+    type: chePlugin
 commands:
-  - name: yarn install
+  - name: 1. Install Yarn 2
     actions:
-      - type: exec
+      - workdir: '${CHE_PROJECTS_ROOT}/react-web-app'
+        type: exec
+        command: yarn set version berry
         component: nodejs
+  - name: 2. Install all required dependencies
+    actions:
+      - workdir: '${CHE_PROJECTS_ROOT}/react-web-app'
+        type: exec
         command: yarn install
-        workdir: '${CHE_PROJECTS_ROOT}/angular-realworld-example-app'
-  - name: build
-    actions:
-      - type: exec
         component: nodejs
-        command: yarn run build
-        workdir: '${CHE_PROJECTS_ROOT}/angular-realworld-example-app'
-  - name: start
+  - name: 3. Build the app
     actions:
-      - type: exec
+      - workdir: '${CHE_PROJECTS_ROOT}/react-web-app'
+        type: exec
+        command: yarn build
         component: nodejs
-        command: yarn run start --host 0.0.0.0 --disableHostCheck true
-        workdir: '${CHE_PROJECTS_ROOT}/angular-realworld-example-app'
-  - name: lint
+  - name: 4. Run the app
     actions:
-      - type: exec
+      - workdir: '${CHE_PROJECTS_ROOT}/react-web-app'
+        type: exec
+        command: yarn start
         component: nodejs
-        command: yarn run lint
-        workdir: '${CHE_PROJECTS_ROOT}/angular-realworld-example-app'
+  - name: 5. Launch tests
+    actions:
+      - workdir: '${CHE_PROJECTS_ROOT}/react-web-app'
+        type: exec
+        command: yarn test
+        component: nodejs
