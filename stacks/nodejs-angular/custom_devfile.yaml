@@ -1,0 +1,44 @@
+apiVersion: 1.0.0
+metadata:
+  generateName: nodejs-angular-
+projects:
+  - name: angular-realworld-example-app
+    source:
+      type: git
+      location: 'https://github.com/che-samples/nodejs-angular'
+components:
+  - type: chePlugin
+    id: vscode/typescript-language-features/latest
+  - type: dockerimage
+    alias: nodejs
+    image: 'quay.io/eclipse/che-nodejs10-community@sha256:6ce1df02636cb02b4c07947a99cb75538b7a04a7a578d3941878d46f496c57c4'
+    memoryLimit: 2Gi
+    endpoints:
+      - name: angular
+        port: 4200
+    mountSources: true
+commands:
+  - name: yarn install
+    actions:
+      - type: exec
+        component: nodejs
+        command: yarn install
+        workdir: '${CHE_PROJECTS_ROOT}/angular-realworld-example-app'
+  - name: build
+    actions:
+      - type: exec
+        component: nodejs
+        command: yarn run build
+        workdir: '${CHE_PROJECTS_ROOT}/angular-realworld-example-app'
+  - name: start
+    actions:
+      - type: exec
+        component: nodejs
+        command: yarn run start --host 0.0.0.0 --disableHostCheck true
+        workdir: '${CHE_PROJECTS_ROOT}/angular-realworld-example-app'
+  - name: lint
+    actions:
+      - type: exec
+        component: nodejs
+        command: yarn run lint
+        workdir: '${CHE_PROJECTS_ROOT}/angular-realworld-example-app'
